@@ -1,6 +1,7 @@
 package com.example.philiptsang.doublerainbow;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,9 +19,14 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
+import android.content.Intent;
+import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,11 +35,14 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationChanged(Location location) {
             location.getLatitude();
             location.getLongitude();
+            LinearLayout linearlayout;
 
             String myLocation = "Latitude = " + location.getLatitude() + " Longitude = " + location.getLongitude();
 
             TextView currentTextView = (TextView) findViewById(R.id.currentText);
-            currentTextView.setText("The coordinates are " + myLocation );
+            currentTextView.setText("Current coordinates are " + myLocation );
+//            currentTextView.setLayoutParams(new ActionBar.LayoutParams());
+//            linearlayout = (LinearLayout) findViewById(R.id.itemLayout0);
             //I make a log to see the results
             Log.e("MY CURRENT LOCATION", myLocation);
 
@@ -59,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+      //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        ImageView yourImageView = (ImageView) findViewById(R.id.train_ani);
+        yourImageView.setBackgroundResource(R.drawable.track_ani);
+        AnimationDrawable progressAnimation = (AnimationDrawable) yourImageView.getBackground();
+        progressAnimation.start();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 double latitude;
                 double longitude;
                 Location location;
-
                 if (displayGpsStatus()) {
                     LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     MyLocationListener locationListener = new MyLocationListener();
@@ -107,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("activity", "LOC by Network");
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+
                         }
                     }
                 }
@@ -118,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent mainIntent = new Intent(MainActivity.this, MapActivity.class);
+                MainActivity.this.finish();
+                startActivity(mainIntent);
+            }
+        }, 8000);
     }
 
     @Override
